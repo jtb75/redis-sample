@@ -23,12 +23,14 @@ jobs:
         working-directory: ./container
         run: |
           docker build . --file Dockerfile --tag jtb75/redis-sample:$TAG --tag jtb75/redis-sample:latest
-      - name: Scan the Docker Image
-        working-directory: ./
-        run: |
-          curl -k -X GET -u ${{ secrets.PCC_USER }}:${{ secrets.PCC_SECRET }} ${{ secrets.PCC_CONSOLE_URL }}/api/v1/util/twistcli > twistcli; chmod a+x twistcli;
-          sleep 10;
-          ./twistcli images scan -u ${{ secrets.PCC_USER }} -p ${{ secrets.PCC_SECRET }} --address ${{ secrets.PCC_CONSOLE_URL }} --details jtb75/redis-sample:$TAG
+      - name: Prisma Cloud image scan
+        id: scan
+        uses: PaloAltoNetworks/prisma-cloud-scan@v1
+        with:
+          pcc_console_url: ${{ secrets.PCC_CONSOLE_URL }}
+          pcc_user: ${{ secrets.PCC_USER }}
+          pcc_pass: ${{ secrets.PCC_SECRET }}
+          image_name: jtb75/redis-sample:$TAG
       - name: Push the Docker image
         run: |
           docker push jtb75/redis-sample:$TAG
