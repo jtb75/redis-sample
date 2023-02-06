@@ -19,6 +19,7 @@ jobs:
         run: |
           docker login -u $DOCKER_USER -p $DOCKER_PASSWORD
           echo "TAG=`date +%Y.%m.%d.%H.%M.%S`" >> $GITHUB_ENV
+          echo "NODE_TLS_REJECT_UNAUTHORIZED=0" >> $GITHUB_ENV
       - name: Build the Docker image
         working-directory: ./container
         run: |
